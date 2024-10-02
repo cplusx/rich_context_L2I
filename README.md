@@ -1,4 +1,4 @@
-# rich_context_L2I
+# Code release for [Rethinking The Training And Evaluation of Rich-Context Layout-to-Image Generation](https://www.arxiv.org/pdf/2409.04847)
 
 Working in progress... More contents coming soon...
 See following instructions for preview experience
@@ -15,3 +15,6 @@ python misc_utils/init_regional_unet.py --model_path hotshotco/SDXL-512 --save_p
 
 # Inference
 Please see the `inference.ipynb`
+
+
+This working is done during author's internship at Amazon. This codebase is a reimplementation of the work on paper. 
