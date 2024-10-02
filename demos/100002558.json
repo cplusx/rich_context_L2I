@@ -1,0 +1,62 @@
+{
+    "bboxes": [
+        [
+            93,
+            355,
+            512,
+            510
+        ],
+        [
+            377,
+            0,
+            512,
+            137
+        ],
+        [
+            197,
+            27,
+            309,
+            248
+        ],
+        [
+            46,
+            59,
+            193,
+            247
+        ],
+        [
+            0,
+            0,
+            512,
+            512
+        ],
+        [
+            51,
+            239,
+            455,
+            421
+        ],
+        [
+            0,
+            0,
+            61,
+            369
+        ],
+        [
+            264,
+            307,
+            512,
+            446
+        ]
+    ],
+    "labels": [
+        "A couch with a blanket on it is sitting on a rug.",
+        "A chandelier with a metal frame in the shape of a sphere, with six candles on it",
+        "A tall bookshelf with many books on it.",
+        "A clock with roman numerals and the word Devrines on it.",
+        "A large clock is mounted on the wall above a white couch.",
+        "A tan couch with a blanket on it and a coffee table in front of it.",
+        "A tall bookcase with a ladder is placed against a wall.",
+        "A coffee table with a metal base and wooden top sits on a carpeted floor."
+    ]
+}

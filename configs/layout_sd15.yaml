@@ -1,0 +1,114 @@
+expt_dir: experiments
+expt_name: layout_v4_sd15
+image_size: 512
+test_image_size: 512
+trainer_args:
+  max_epochs: 500
+  accelerator: "gpu"
+  devices: [0,1,2,3,4,5,6,7]
+  limit_train_batches: 3200
+  limit_val_batches: 1
+  check_val_every_n_epoch: 1
+  log_every_n_steps: 5
+  precision: 16
+  strategy: "deepspeed_stage_2"
+diffusion:
+  target: pl_trainer.SD15_mask_reorg.RegionalAttnSDTrainingMaskAndBboxReorgAdaptiveText
+  params:
+    accumulate_grad_batches: 16
+    loss_fn: "l2"
+    optim_args: 
+      lr: 2e-5
+      weight_decay: 1e-5
+    guidance_scale: 7.5
+    train_image_size: ${image_size}
+    test_image_size: ${test_image_size}
+    num_ddim_steps: 20
+    position_net_and_fuser_init_weights: layout_v4_sd15_init_315.pth
+    attention_weight_scale: 1.0
+    use_ema: True
+    ema_decay: 0.99
+    ema_start: 1000
+pipe:
+  target: pipelines.sd_pipeline.StableDiffusionRegionalAttnPipeline
+  params: 
+    pretrained_model_name_or_path: "runwayml/stable-diffusion-v1-5"
+    add_watermarker: False
+    use_safetensors: True
+    variant: fp16
+scheduler:
+  target: diffusers.DDIMScheduler
+  params:
+    pretrained_model_name_or_path: "runwayml/stable-diffusion-v1-5"
+    subfolder: "scheduler"
+unet:
+  target: regional_attention.diffusers_unet.UNet2DConditionModel
+  params:
+    position_net_cls: regional_attention.regional_attention.TextEmbeddingNetV2
+    fuser_cls: regional_attention.regional_attention.RegionalCrossAttention
+    pretrained_model_name_or_path: "regional_attn_sd15_init_weights"
+data:
+  batch_size: 4
+  val_batch_size: 1
+  train_shuffle: true
+  val_shuffle: true
+  collate_fn: 
+    target: diffusion_dataset.dataset_utils.custom_collate_fn
+  train:
+    target: diffusion_dataset.dataset_utils.JointDatasetWithRegionReorg
+    params:
+      mode: "train"
+      subdatasets:
+        - target: diffusion_dataset.COCOStuff.CocoStuffBboxCaptionDataset
+          params: 
+            root: ../DetailedSD/data/coco_2017/
+            image_size: ${image_size}
+            validation: false
+            min_objects_per_image: 1
+            max_objects_per_image: 30
+            min_object_size: 0.01
+        - target: diffusion_dataset.CC3M_synthetic.CC3MSyntheticDataset
+          params: 
+            root: /home/ubuntu/cjiaxin_16T/CC3M
+            synthetic_data_dir: /home/ubuntu/cjiaxin_16T/CC3M/cc3m_generated_data_768
+            meta_name: 'meta_2024_4_22.json'
+            image_size: ${image_size}
+            validation: false
+  val:
+    target: diffusion_dataset.dataset_utils.JointDatasetWithRegionReorg
+    params:
+      mode: "val"
+      subdatasets:
+        - target: diffusion_dataset.COCOStuff.CocoStuffBboxCaptionDataset
+          params: 
+            root: ../DetailedSD/data/coco_2017/
+            image_size: ${test_image_size}
+            validation: true
+        - target: diffusion_dataset.CC3M_synthetic.CC3MSyntheticDataset
+          params: 
+            root: /home/ubuntu/cjiaxin_16T/CC3M
+            synthetic_data_dir: /home/ubuntu/cjiaxin_16T/CC3M/cc3m_generated_data_768
+            meta_name: 'meta_2024_4_22.json'
+            image_size: ${image_size}
+            validation: true
+callbacks:
+  - target: pytorch_lightning.callbacks.ModelCheckpoint
+    params:
+      dirpath: "${expt_dir}/${expt_name}"
+      filename: "{epoch:04d}"
+      monitor: epoch
+      mode: max
+      save_top_k: 2
+      save_last: true
+  - target: callbacks.training_visualizer.InstructedP2PTrainingLogger
+    params:
+      max_num_images: 8
+    require_wandb: true
+  - target: callbacks.script_callback.ChildrenNodeOnlyScriptCallback
+    params:
+      script_path: delete_legacy_optimizer_states.sh
+      script_args: "${expt_name}"
+  - target: callbacks.script_callback.ParentNodeOnlyScriptCallback
+    params:
+      script_path: distribute_latest_ckpt_to_children.sh
+      script_args: "${expt_name} 172.31.47.194" # machine 2 -> 1
