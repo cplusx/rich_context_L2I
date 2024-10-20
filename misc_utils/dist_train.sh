@@ -9,4 +9,4 @@ torchrun \
     --rdzv_endpoint $1:29500 \
     train.py -c $2 -n $NNODE -r
 
-# usage: bash scripts/train_scripts/dist_train.sh 172.31.42.68 config_path.yaml num_nodes
+# usage: bash misc_utils/dist_train.sh 172.31.42.68 config_path.yaml num_nodes

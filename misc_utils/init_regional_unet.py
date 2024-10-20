@@ -20,11 +20,6 @@ unet = UNet2DConditionModel.from_pretrained(args.model_path, subfolder='unet')
 unet_with_regional_attn_config = dict(unet.config)
 unet_with_regional_attn_config['attention_type'] = 'regional'
 unet_with_regional_attn_config['_use_default_values'] = []
-# if 'sd15' in args.save_path:
-#     # this part need to be modified to V2
-#     unet_with_regional_attn_config['position_net_cls'] = "regional_attention.regional_attention.TextEmbeddingNet"
-#     unet_with_regional_attn_config['fuser_cls'] = "regional_attention.regional_attention.RegionalCrossAttention"
-# else:
 
 if args.model_type == 'ca':
     fuser_cls = "regional_attention.regional_attention.RegionalCrossAttention"

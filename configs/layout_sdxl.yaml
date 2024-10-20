@@ -1,9 +1,9 @@
 expt_dir: experiments
-expt_name: layout_v4
+expt_name: layout_sdxl
 image_size: 512
 test_image_size: 512
 trainer_args:
-  max_epochs: 60
+  max_epochs: 500
   accelerator: "gpu"
   devices: [0,1,2,3,4,5,6,7]
   limit_train_batches: 3200
@@ -24,7 +24,6 @@ diffusion:
     train_image_size: ${image_size}
     test_image_size: ${test_image_size}
     num_ddim_steps: 20
-    position_net_and_fuser_init_weights: layout_v4_e412_init.pth
     attention_weight_scale: 1.0
     use_ema: True
     ema_decay: 0.99
@@ -110,7 +109,7 @@ callbacks:
       mode: max
       save_top_k: 2
       save_last: true
-  - target: callbacks.training_visualizer.InstructedP2PTrainingLogger
+  - target: callbacks.training_visualizer.TrainingLogger
     params:
       max_num_images: 8
     require_wandb: true
@@ -118,7 +117,3 @@ callbacks:
     params:
       script_path: misc_utils/delete_legacy_optimizer_states.sh
       script_args: "${expt_name}"
-  - target: callbacks.script_callback.ParentNodeOnlyScriptCallback
-    params:
-      script_path: misc_utils/distribute_latest_ckpt_to_children.sh
-      script_args: "${expt_name} 172.31.47.194" # machine 2 -> 1

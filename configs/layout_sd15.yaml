@@ -1,5 +1,5 @@
 expt_dir: experiments
-expt_name: layout_v4_sd15
+expt_name: layout_sd15
 image_size: 512
 test_image_size: 512
 trainer_args:
@@ -100,7 +100,7 @@ callbacks:
       mode: max
       save_top_k: 2
       save_last: true
-  - target: callbacks.training_visualizer.InstructedP2PTrainingLogger
+  - target: callbacks.training_visualizer.TrainingLogger
     params:
       max_num_images: 8
     require_wandb: true

@@ -37,7 +37,7 @@ def tensor2image(x):
     )
     return img
 
-class InstructedP2PTrainingLogger(Callback):
+class TrainingLogger(Callback):
     def __init__(
         self, 
         wandb_logger: WandbLogger=None,
