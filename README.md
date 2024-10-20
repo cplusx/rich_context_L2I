@@ -1,5 +1,8 @@
 ### Code release for [Rethinking The Training And Evaluation of Rich-Context Layout-to-Image Generation (NeurIPS 2024)](https://www.arxiv.org/pdf/2409.04847)
 
+![teaser](figures/teaser.png)
+![illustration](figures/xattn_layer_illustration.png)
+
 Working in progress... More contents coming soon...
 See following instructions for preview experience
 
@@ -44,6 +47,7 @@ You can pass the labels and bounding boxes directly to the model, they need to b
 
 ## Generate Synthetic Data
 Coming soon
+![dataset stats](figures/dataset_stats.png)
 
 ## Training Your Own Model
 To train your own model, you will need to:
