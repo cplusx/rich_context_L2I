@@ -3,9 +3,6 @@
 ![teaser](figures/teaser.png)
 ![illustration](figures/xattn_layer_illustration.png)
 
-Working in progress... More contents coming soon...
-See following instructions for preview experience
-
 
 ## Quick Demo
 ### 1. Clone this repo
